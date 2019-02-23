@@ -26,7 +26,7 @@ import javax.net.ssl.SSLSocketFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    String url = "https://www.baidu.com/";
+    String url = "https://ptcoopsearch.reader.qq.com/hotkey?hotkeytype=huawei&changenum=0";
     private TextView viewById;
 
     private static final String TAG = "MainActivity";
@@ -44,61 +44,20 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendRequest(View view) {
 
-        new Thread() {
+        LuOkHttp.sendJsonRequest("", url, TestBean.class, new IJsonDataListener<TestBean>(){
             @Override
-            public void run() {
-                super.run();
-                URL url = null;
-                HttpURLConnection urlConnection = null;
-                try {
-                    url = new URL("http://v.juhe.cn/toutiao/index");
-                    urlConnection = (HttpURLConnection) url.openConnection();//打开Http链接
-                    urlConnection.setConnectTimeout(6000);//连接超时时间
-                    urlConnection.setUseCaches(false);//不使用缓存
-                    urlConnection.setInstanceFollowRedirects(false);//是成员函数,仅作用于当前函数,设置这个链接是否可以被重定向
-                    urlConnection.setReadTimeout(3000);//响应的超时时间
-                    urlConnection.setDoInput(true);//设置这个连接是否可以写入数据
-                    urlConnection.setDoOutput(true);//设置这个连接是否可以输出数据
-                    urlConnection.setRequestMethod("GET");//设置请求方式
-                    urlConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");//设置消息类型
-                    urlConnection.setRequestProperty("user-agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.26 Safari/537.36 Core/1.63.6799.400 QQBrowser/10.3.2908.400");//设置消息类型
-                    urlConnection.connect();//连接,从上述至此的配置必须要在connect之前完成
-
-
-                    //-----------字符流写入数据-----------
-                    if (urlConnection.getResponseCode() == HttpsURLConnection.HTTP_OK) {//得到服务器返回码是否连接成功
-                        InputStream in = urlConnection.getInputStream();
-                        Log.d(TAG, "run: 打印数据: " + getContent(in));
-                    }
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                    }
+            public void onSuccess(TestBean clazz) {
+                if (clazz != null) {
+                    List<TestBean.BooksBean> books = clazz.getBooks();
+                    viewById.setText(books.toString());
                 }
+            }
+
+            @Override
+            public void onFailed() {
 
             }
-        }.start();
-
-
-
-//        LuOkHttp.sendJsonRequest("", url, TestBean.class, new IJsonDataListener<TestBean>(){
-//            @Override
-//            public void onSuccess(TestBean clazz) {
-//                if (clazz != null) {
-//                    List<TestBean.BooksBean> books = clazz.getBooks();
-//                    viewById.setText(books.toString());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailed() {
-//
-//            }
-//        });
+        });
     }
 
     private String getContent(InputStream inputStream) {

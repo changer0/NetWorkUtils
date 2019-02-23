@@ -52,6 +52,7 @@ public class JsonCallbackListener<T> implements CallbackListener {
             while ((line = reader.readLine()) != null) {
                 stringBuilder.append(line);
             }
+            content = stringBuilder.toString();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
