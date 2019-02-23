@@ -2,31 +2,23 @@ package com.lulu.curl.okhttpdemo;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.lulu.curl.okhttpdemo.luokhttp.IJsonDataListener;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    String url = "https://ptcoopsearch.reader.qq.com/hotkey?hotkeytype=huawei&changenum=0";
+    int num = 0;
+    String url = "https://ptcoopsearch.reader.qq.com/hotkey?hotkeytype=huawei&changenum=";
     private TextView viewById;
 
     private static final String TAG = "MainActivity";
@@ -44,12 +36,20 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendRequest(View view) {
 
-        LuOkHttp.sendJsonRequest("", url, TestBean.class, new IJsonDataListener<TestBean>(){
+        num = num < 4 ? ++num : 1;
+
+        LuOkHttp.sendJsonRequest("", url + num, TestBean.class, new IJsonDataListener<TestBean>(){
             @Override
             public void onSuccess(TestBean clazz) {
                 if (clazz != null) {
+                    StringBuffer sb = new StringBuffer();
                     List<TestBean.BooksBean> books = clazz.getBooks();
-                    viewById.setText(books.toString());
+                    if (books != null) {
+                        for (TestBean.BooksBean book : books) {
+                            sb.append(book.getName()).append("\n");
+                        }
+                    }
+                    viewById.setText(sb.toString());
                 }
             }
 

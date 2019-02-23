@@ -20,7 +20,7 @@ public class JsonHttpRequest implements IHttpRequest {
 
 
     @Override
-    public void setQul(String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 

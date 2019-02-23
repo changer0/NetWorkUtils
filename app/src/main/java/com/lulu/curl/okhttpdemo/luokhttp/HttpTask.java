@@ -1,5 +1,7 @@
 package com.lulu.curl.okhttpdemo.luokhttp;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
@@ -12,11 +14,13 @@ public class HttpTask<T> implements Runnable{
 
     private IHttpRequest iHttpRequest;
 
+    private static final String TAG = "HttpTask";
+
     public HttpTask(T requestData, String url, IHttpRequest httpRequest, CallbackListener callbackListener) {
         iHttpRequest = httpRequest;
-        httpRequest.setQul(url);
+        httpRequest.setUrl(url);
         httpRequest.setListener(callbackListener);
-
+        Log.d(TAG, "HttpTask: url: " + url);
         String content = new Gson().toJson(requestData);
         try {
             httpRequest.setData(content.getBytes("utf-8"));

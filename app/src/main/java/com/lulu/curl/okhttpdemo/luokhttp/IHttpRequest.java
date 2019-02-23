@@ -10,7 +10,7 @@ public interface IHttpRequest {
      * 协议地址
      * @param url
      */
-    void setQul(String url);
+    void setUrl(String url);
 
     /**
      * 设置请求参数
