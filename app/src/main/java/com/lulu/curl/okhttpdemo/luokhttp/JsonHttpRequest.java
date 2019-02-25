@@ -61,11 +61,11 @@ public class JsonHttpRequest implements IHttpRequest {
             if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {//得到服务器返回码是否连接成功
                 InputStream in = urlConnection.getInputStream();
                 mCallbackListener.onSuccess(in);
+            } else {
+                throw new RuntimeException("请求失败");
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new RuntimeException("请求失败");
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();

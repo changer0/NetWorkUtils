@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     int num = 0;
     String url = "https://ptcoopsearch.reader.qq.com/hotkey?hotkeytype=huawei&changenum=";
+
     private TextView viewById;
 
     private static final String TAG = "MainActivity";
@@ -58,29 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private String getContent(InputStream inputStream) {
-        String content = "";
-        try {
-            BufferedInputStream bis = new BufferedInputStream(inputStream);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(bis));
-            StringBuilder stringBuilder = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return content;
     }
 
 }

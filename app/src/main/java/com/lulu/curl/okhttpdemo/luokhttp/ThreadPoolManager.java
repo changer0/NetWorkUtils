@@ -1,6 +1,9 @@
 package com.lulu.curl.okhttpdemo.luokhttp;
 
+import android.util.Log;
+
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.DelayQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -11,6 +14,8 @@ import java.util.concurrent.TimeUnit;
  * for 线程池管理类
  */
 public class ThreadPoolManager {
+
+    private static final String TAG = "ThreadPoolManager";
 
     //1. 创建队列,用来保存异步请求任务
     private LinkedBlockingQueue<Runnable> mQueue = new LinkedBlockingQueue<>();//LinkedBlockingQueue FIFO
@@ -40,6 +45,7 @@ public class ThreadPoolManager {
             }
         });
         mThreadPoolExecutor.execute(communicateThread);
+        mThreadPoolExecutor.execute(delayThread);
     }
 
     //4. 创建队列与线程池的"交互"线程
@@ -55,6 +61,38 @@ public class ThreadPoolManager {
                 }
                 //执行线程池中的线程任务
                 mThreadPoolExecutor.execute(runnable);
+            }
+        }
+    };
+
+    // 创建延时队列
+    private DelayQueue<HttpTask> mDelayQueue = new DelayQueue<>();
+
+    //添加到延时队列
+    public void addDelayTask(HttpTask httpTask) {
+        if (httpTask != null) {
+            httpTask.setDelayTime(3000);
+            mDelayQueue.offer(httpTask);
+            Log.d(TAG, "addDelayTask: ");
+        }
+    }
+    public Runnable delayThread = new Runnable() {
+        @Override
+        public void run() {
+            HttpTask ht = null;
+            while (true) {
+                try {
+                    ht = mDelayQueue.take();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (ht != null && ht.getRetryCount() < 3) {
+                    mThreadPoolExecutor.execute(ht);
+                    ht.setRetryCount(ht.getRetryCount() + 1);
+                    Log.d(TAG, "run: 重试机制: " + ht.getRetryCount());
+                } else {
+                    Log.d(TAG, "run: 重试机制:超出次数 ");
+                }
             }
         }
     };
